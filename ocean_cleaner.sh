@@ -13,10 +13,18 @@ tmp_extraction_target_dir="$(mktemp -d)"
 # unzip
 unzip -q "$1" -d "$tmp_extraction_target_dir"
 
-# remove marks
+# remove additional link file
 rm "$tmp_extraction_target_dir/oceanofpdf.com"
-replacement_term='s/<div .*OceanofPDF.*<\/div>//'
-find "$tmp_extraction_target_dir" -type f -print0 | xargs -0 sed -i "${replacement_term}" #--debug | grep "MATCHED" -B2 -A2
+
+# remove marks
+removal_term='s/<div .*OceanofPDF.*<\/div>//'
+
+# insert spaces before and after dashes if whitespaces are missing
+# (sed does not support lookaround nor \s in regex)
+insert_spaces_term='s/\([^[:space:]]\)\(—\|–\|\&#8212\;\|\&#8211\;\|\&#x2014\;\|\&#x2013\;\)\([^[:space:]]\)/\1 \2 \3/g'
+
+# apply changes
+find "$tmp_extraction_target_dir" -type f -print0 | xargs -0 sed -i -e "${removal_term}" -e "${insert_spaces_term}" #--debug | grep "MATCHED" -B2 -A2
 
 # rezip
 output_file="$(pwd)/"
