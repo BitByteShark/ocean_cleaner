@@ -21,7 +21,7 @@ removal_term='s/<div .*OceanofPDF.*<\/div>//'
 
 # insert spaces before and after dashes if whitespaces are missing
 # (sed does not support lookaround nor \s in regex)
-insert_spaces_term='s/\([^[:space:]]\)\(—\|–\|\&#8212\;\|\&#8211\;\|\&#x2014\;\|\&#x2013\;\)\([^[:space:]]\)/\1 \2 \3/g'
+insert_spaces_term='s/\([^[:space:]]\)\(—\|–\|…\|\&#8212\;\|\&#8211\;\|\&#x2014\;\|\&#x2013\;\|\&#8230\;\)\([^[:space:]]\)/\1 \2 \3/g'
 
 # apply changes
 find "$tmp_extraction_target_dir" -type f -print0 | xargs -0 sed -i -e "${removal_term}" -e "${insert_spaces_term}" #--debug | grep "MATCHED" -B2 -A2
