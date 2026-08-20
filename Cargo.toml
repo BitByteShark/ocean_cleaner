@@ -1,0 +1,12 @@
+[package]
+name = "ocean_cleaner"
+version = "1.0.0"
+edition = "2024"
+
+[dependencies]
+clap = { version = "4.0", features = ["derive"] }
+anyhow = "1.0"
+log = "0.4.33"
+env_logger = "0.11.11"
+zip = "4"
+regex = "1.13.1"

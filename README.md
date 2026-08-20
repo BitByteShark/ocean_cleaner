@@ -1,1 +1,7 @@
-simple bash script that removes watermark links etc. from epub files marked by OceanofPDF.com
+Simple cli tool that removes unwanted watermarks from epub files and ensures spacers around special characters like em-dashes.
+
+install:
+`cargo install --path .`
+
+usage:
+`ocean_cleaner input.epub output.epub`
