@@ -38,6 +38,7 @@ const FILE_EXTENSIONS: &[&str] = &[
     ".xhtml",
     ".css",
     ".xml",
+    ".htm",
 ];
 
 #[derive(Parser, Debug)]
@@ -74,8 +75,7 @@ fn repack_epub(input: &PathBuf, output: &PathBuf) -> Result<()> {
             .with_context(|| format!("reading ZIP entry {i}"))?;
         
         let filepath = entry.name().to_owned();
-        // filename e.g. looks like "META-INF/calibre_bookmarks.txt"
-        println!("repacking: {filepath}");
+        // filepath e.g. looks like "META-INF/calibre_bookmarks.txt"
         
         // filename is the filename without the path, e.g. "calibre_bookmarks.txt"
         let filename = Path::new(&filepath)
@@ -84,12 +84,13 @@ fn repack_epub(input: &PathBuf, output: &PathBuf) -> Result<()> {
         
         if entry.is_dir() {
             writer.add_directory(&filepath, SimpleFileOptions::default())?;
+            println!("< dir >: {filepath}");
             continue;
         }
         
         if filename.is_some_and(|filename| DROP_FILES.contains(&filename)){
             // skip and dont write this file to output
-            println!("\t --> dropped");
+            println!("< remove file >: {filepath}");
             continue;
         }
         
@@ -97,9 +98,12 @@ fn repack_epub(input: &PathBuf, output: &PathBuf) -> Result<()> {
         entry.read_to_end(&mut contents)?;
         
         if FILE_EXTENSIONS.iter().any(|ext| filepath.ends_with(ext)){
+            println!("< reformat >: {filepath}");
             let text = String::from_utf8(contents)?;
             let processed_text = apply_text_edits(&text);
             contents = processed_text.into_bytes();
+        } else {
+            println!("< no edit >: {filepath}");
         }
         
         // mimetype file in epub files usually is the first file of
